@@ -117,6 +117,21 @@ class CreateStatementTest extends TestCase
             ['UNION = (`t1`, `t2`)', 'UNION=(`t1`, `t2`)'],
             ['PAGE_COMPRESSED=1', 'PAGE_COMPRESSED=1'],
             ['PAGE_COMPRESSION_LEVEL=9', 'PAGE_COMPRESSION_LEVEL=9'],
+            ['PAGE_CHECKSUM=1', 'PAGE_CHECKSUM=1'],
+            ['TRANSACTIONAL=1', 'TRANSACTIONAL=1'],
+            ['ENCRYPTED=YES', 'ENCRYPTED=YES'],
+            ['ENCRYPTION_KEY_ID=2', 'ENCRYPTION_KEY_ID=2'],
+            ["ENCRYPTION='Y'", "ENCRYPTION='Y'"],
+            ["COMPRESSION='zlib'", "COMPRESSION='zlib'"],
+            ['STATS_AUTO_RECALC=1', 'STATS_AUTO_RECALC=1'],
+            ['STATS_PERSISTENT=0', 'STATS_PERSISTENT=0'],
+            ['STATS_SAMPLE_PAGES=25', 'STATS_SAMPLE_PAGES=25'],
+            ['AUTOEXTEND_SIZE=4M', 'AUTOEXTEND_SIZE=4M'],
+            ['IETF_QUOTES=YES', 'IETF_QUOTES=YES'],
+            ['SEQUENCE=1', 'SEQUENCE=1'],
+            ["ENGINE_ATTRIBUTE='{}'", "ENGINE_ATTRIBUTE='{}'"],
+            ["SECONDARY_ENGINE_ATTRIBUTE='{}'", "SECONDARY_ENGINE_ATTRIBUTE='{}'"],
+            ['ADAPTIVE_HASH_INDEX=YES', 'ADAPTIVE_HASH_INDEX=YES'],
         ];
     }
 

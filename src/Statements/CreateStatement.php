@@ -219,6 +219,66 @@ class CreateStatement extends Statement
             23,
             'var',
         ],
+        'PAGE_CHECKSUM' => [
+            24,
+            'var',
+        ],
+        'TRANSACTIONAL' => [
+            25,
+            'var',
+        ],
+        'ENCRYPTED' => [
+            26,
+            'var',
+        ],
+        'ENCRYPTION_KEY_ID' => [
+            27,
+            'var',
+        ],
+        'ENCRYPTION' => [
+            28,
+            'var',
+        ],
+        'COMPRESSION' => [
+            29,
+            'var',
+        ],
+        'STATS_AUTO_RECALC' => [
+            30,
+            'var',
+        ],
+        'STATS_PERSISTENT' => [
+            31,
+            'var',
+        ],
+        'STATS_SAMPLE_PAGES' => [
+            32,
+            'var',
+        ],
+        'AUTOEXTEND_SIZE' => [
+            33,
+            'var',
+        ],
+        'IETF_QUOTES' => [
+            34,
+            'var',
+        ],
+        'SEQUENCE' => [
+            35,
+            'var',
+        ],
+        'ENGINE_ATTRIBUTE' => [
+            36,
+            'var',
+        ],
+        'SECONDARY_ENGINE_ATTRIBUTE' => [
+            37,
+            'var',
+        ],
+        'ADAPTIVE_HASH_INDEX' => [
+            38,
+            'var',
+        ],
     ];
 
     /**
