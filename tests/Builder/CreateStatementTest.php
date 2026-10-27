@@ -84,6 +84,25 @@ class CreateStatementTest extends TestCase
         );
     }
 
+    public function testBuilderQuotedTableOptions(): void
+    {
+        // MariaDB quotes engine-defined table options in SHOW CREATE TABLE.
+        $parser = new Parser(
+            'CREATE TABLE `t` ( `id` int(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+            . " `PAGE_COMPRESSED`='ON' `PAGE_COMPRESSION_LEVEL`=9 `ENCRYPTED`=YES `ENCRYPTION_KEY_ID`=2;"
+        );
+        self::assertEmpty($parser->errors);
+        $stmt = $parser->statements[0];
+        self::assertInstanceOf(CreateStatement::class, $stmt);
+        self::assertNotNull($stmt->entityOptions);
+        self::assertSame("'ON'", $stmt->entityOptions->has('PAGE_COMPRESSED', true));
+        self::assertEquals(
+            "CREATE TABLE `t` (\n  `id` int(11) NOT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+            . " PAGE_COMPRESSED='ON' PAGE_COMPRESSION_LEVEL=9 ENCRYPTED=YES ENCRYPTION_KEY_ID=2",
+            $stmt->build()
+        );
+    }
+
     /**
      * @return string[][]
      */
@@ -116,6 +135,7 @@ class CreateStatementTest extends TestCase
             ['TABLESPACE `ts` STORAGE DISK', 'TABLESPACE `ts` STORAGE DISK'],
             ['UNION = (`t1`, `t2`)', 'UNION=(`t1`, `t2`)'],
             ['PAGE_COMPRESSED=1', 'PAGE_COMPRESSED=1'],
+            ["`PAGE_COMPRESSED`='ON'", "PAGE_COMPRESSED='ON'"],
             ['PAGE_COMPRESSION_LEVEL=9', 'PAGE_COMPRESSION_LEVEL=9'],
             ['PAGE_CHECKSUM=1', 'PAGE_CHECKSUM=1'],
             ['TRANSACTIONAL=1', 'TRANSACTIONAL=1'],
@@ -148,6 +168,14 @@ class CreateStatementTest extends TestCase
             "CREATE TABLE `t` (\n  `id` int\n) ENGINE=InnoDB " . $expected,
             $parser->statements[0]->build()
         );
+    }
+
+    public function testBuilderQuotedNameIsNotAnOption(): void
+    {
+        // Quoted option names are only accepted for table options.
+        $parser = new Parser('SELECT `DISTINCT` FROM `t`');
+        self::assertEmpty($parser->errors);
+        self::assertSame('SELECT `DISTINCT` FROM `t`', $parser->statements[0]->build());
     }
 
     public function testBuilderCollate(): void

@@ -107,10 +107,14 @@ class CreateStatement extends Statement
     /**
      * All table options.
      *
-     * @var array<string, int|array<int, int|string>>
-     * @psalm-var array<string, (positive-int|array{positive-int, ('var'|'var='|'expr'|'expr=')})>
+     * @var array<string, bool|int|array<int, int|string>>
+     * @psalm-var array<string, (bool|positive-int|array{positive-int, ('var'|'var='|'expr'|'expr=')})>
      */
     public static $TABLE_OPTIONS = [
+        // Tells the `OptionsArray` to also accept quoted option names.
+        // MariaDB quotes engine-defined options in `SHOW CREATE TABLE`.
+        '_ALLOW_QUOTED' => true,
+
         'ENGINE' => [
             1,
             'var=',
