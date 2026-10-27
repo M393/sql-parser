@@ -84,13 +84,54 @@ class CreateStatementTest extends TestCase
         );
     }
 
-    public function testBuilderCompressed(): void
+    /**
+     * @return string[][]
+     */
+    public static function tableOptionsProvider(): array
     {
-        $parser = new Parser('CREATE TABLE users ( user_id int ) PAGE_COMPRESSED=1 PAGE_COMPRESSION_LEVEL=9;');
-        $stmt = $parser->statements[0];
-        $this->assertEquals(
-            "CREATE TABLE users (\n  `user_id` int\n) PAGE_COMPRESSED=1 PAGE_COMPRESSION_LEVEL=9",
-            $stmt->build()
+        return [
+            ['AUTO_INCREMENT=5', 'AUTO_INCREMENT=5'],
+            ['AVG_ROW_LENGTH=100', 'AVG_ROW_LENGTH=100'],
+            ['AVG_ROW_LENGTH 100', 'AVG_ROW_LENGTH 100'],
+            ['CHARACTER SET=utf8mb4', 'CHARACTER SET=utf8mb4'],
+            ['CHARACTER SET utf8mb4', 'CHARACTER SET=utf8mb4'],
+            ['CHARSET=utf8mb4', 'CHARSET=utf8mb4'],
+            ['DEFAULT CHARACTER SET=utf8mb4', 'DEFAULT CHARACTER SET=utf8mb4'],
+            ['DEFAULT CHARSET=utf8mb4', 'DEFAULT CHARSET=utf8mb4'],
+            ['CHECKSUM=1', 'CHECKSUM=1'],
+            ['DEFAULT COLLATE=utf8mb4_bin', 'DEFAULT COLLATE=utf8mb4_bin'],
+            ['COLLATE=utf8mb4_bin', 'COLLATE=utf8mb4_bin'],
+            ["COMMENT='foo'", "COMMENT='foo'"],
+            ["CONNECTION='mysql://user@host/db/t'", "CONNECTION='mysql://user@host/db/t'"],
+            ["DATA DIRECTORY = '/tmp/data'", "DATA DIRECTORY='/tmp/data'"],
+            ['DELAY_KEY_WRITE=1', 'DELAY_KEY_WRITE=1'],
+            ["INDEX DIRECTORY='/tmp/index'", "INDEX DIRECTORY='/tmp/index'"],
+            ['INSERT_METHOD=LAST', 'INSERT_METHOD=LAST'],
+            ['KEY_BLOCK_SIZE=8', 'KEY_BLOCK_SIZE=8'],
+            ['MAX_ROWS=1000', 'MAX_ROWS=1000'],
+            ['MIN_ROWS=10', 'MIN_ROWS=10'],
+            ['PACK_KEYS=DEFAULT', 'PACK_KEYS=DEFAULT'],
+            ["PASSWORD='secret'", "PASSWORD='secret'"],
+            ['ROW_FORMAT=DYNAMIC', 'ROW_FORMAT=DYNAMIC'],
+            ['TABLESPACE `ts` STORAGE DISK', 'TABLESPACE `ts` STORAGE DISK'],
+            ['UNION = (`t1`, `t2`)', 'UNION=(`t1`, `t2`)'],
+            ['PAGE_COMPRESSED=1', 'PAGE_COMPRESSED=1'],
+            ['PAGE_COMPRESSION_LEVEL=9', 'PAGE_COMPRESSION_LEVEL=9'],
+        ];
+    }
+
+    /**
+     * @dataProvider tableOptionsProvider
+     */
+    #[DataProvider('tableOptionsProvider')]
+    public function testBuilderTableOption(string $option, string $expected): void
+    {
+        // The trailing ENGINE option checks that the option does not consume the following tokens.
+        $parser = new Parser('CREATE TABLE `t` ( `id` int ) ' . $option . ' ENGINE=InnoDB;');
+        self::assertEmpty($parser->errors);
+        self::assertSame(
+            "CREATE TABLE `t` (\n  `id` int\n) ENGINE=InnoDB " . $expected,
+            $parser->statements[0]->build()
         );
     }
 
